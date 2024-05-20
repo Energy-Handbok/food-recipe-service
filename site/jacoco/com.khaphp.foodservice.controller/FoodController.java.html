@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FoodController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">food-service</a> &gt; <a href="index.source.html" class="el_package">com.khaphp.foodservice.controller</a> &gt; <span class="el_source">FoodController.java</span></div><h1>FoodController.java</h1><pre class="source lang-java linenums">package com.khaphp.foodservice.controller;
+
+import com.khaphp.common.dto.ResponseObject;
+import com.khaphp.foodservice.dto.Food.FoodDTOcreate;
+import com.khaphp.foodservice.dto.Food.FoodDTOupdate;
+import com.khaphp.foodservice.dto.Food.UpdateStatusFood;
+import com.khaphp.foodservice.service.FoodService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+@RestController
+@RequestMapping(&quot;api/v1/food&quot;)
+//@SecurityRequirement(name = &quot;EnergyHandbook&quot;)
+<span class="nc" id="L18">@RequiredArgsConstructor</span>
+public class FoodController {
+    private final FoodService foodService;
+
+    @GetMapping
+    public ResponseEntity&lt;Object&gt; getAll(@RequestParam(defaultValue = &quot;10&quot;) int pageSize,
+                                    @RequestParam(defaultValue = &quot;1&quot;) int pageIndex){
+<span class="nc" id="L25">        ResponseObject&lt;Object&gt; responseObject = foodService.getAll(pageSize, pageIndex);</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L27">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L29">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+    @GetMapping(&quot;/detail&quot;)
+    public ResponseEntity&lt;Object&gt; getObject(String id){
+<span class="nc" id="L33">        ResponseObject&lt;Object&gt; responseObject = foodService.getDetail(id);</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L35">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L37">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Object&gt; createObject(@RequestBody @Valid FoodDTOcreate object){
+<span class="nc" id="L42">        ResponseObject&lt;Object&gt; responseObject = foodService.create(object);</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L44">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L46">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+
+    @PutMapping(
+            path = &quot;/img&quot;,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity&lt;Object&gt; updateImg(@RequestParam(&quot;id&quot;) String id,
+                                       @RequestParam(&quot;file&quot;) MultipartFile file){
+<span class="nc" id="L56">        ResponseObject&lt;Object&gt; responseObject = foodService.updateImage(id, file);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L58">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L60">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+
+    @PutMapping
+    public ResponseEntity&lt;Object&gt; updateObject(@RequestBody @Valid FoodDTOupdate object){
+<span class="nc" id="L65">        ResponseObject&lt;Object&gt; responseObject = foodService.update(object);</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L67">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L69">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+
+    @PutMapping(&quot;/status&quot;)
+    public ResponseEntity&lt;Object&gt; updateObjectStatus(@RequestBody @Valid UpdateStatusFood object){
+<span class="nc" id="L74">        ResponseObject&lt;Object&gt; responseObject = foodService.updateStatus(object);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L76">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L78">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+
+    @DeleteMapping
+    public ResponseEntity&lt;Object&gt; deleteObject(String id){
+<span class="nc" id="L83">        ResponseObject&lt;Object&gt; responseObject = foodService.delete(id);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if(responseObject.getCode() == 200){</span>
+<span class="nc" id="L85">            return ResponseEntity.ok(responseObject);</span>
+        }
+<span class="nc" id="L87">        return ResponseEntity.badRequest().body(responseObject);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
