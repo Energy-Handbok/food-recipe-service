@@ -7,6 +7,7 @@ import com.khaphp.foodreceipeservice.dto.FoodTutorial.FoodTutorialDTOcreateItem;
 import com.khaphp.foodreceipeservice.dto.FoodTutorial.FoodTutorialDTOupdate;
 import com.khaphp.foodreceipeservice.entity.CookingRecipe;
 import com.khaphp.foodreceipeservice.entity.FoodTutorial;
+import com.khaphp.foodreceipeservice.exception.ObjectNotFound;
 import com.khaphp.foodreceipeservice.repo.CookingRecipeRepository;
 import com.khaphp.foodreceipeservice.repo.FoodTutorialRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FoodTutorialServiceImpl implements FoodTutorialService {
     public static final String NUMBER_ORDER_IN_FOOTTUTORIAL = "numberOrder";
+    public static final String OBJECT_NOT_FOUND_MSG = "object not found";
+    public static final String EXCEPTION_MSG = "Exception: ";
+    public static final String SUCCESS_MSG = "Success";
     private final FoodTutorialRepository foodTutorialRepository;
     private final CookingRecipeRepository cookingRecipeRepository;
     private final ModelMapper modelMapper;
@@ -58,7 +62,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         }
         objList.forEach(object -> object.setImg(linkBucket + object.getImg()));
         return ResponseObject.builder()
-                .code(200).message("Success")
+                .code(200).message(SUCCESS_MSG)
                 .pageSize(objList.size()).pageIndex(pageIndex).totalPage(totalPage)
                 .data(objList)
                 .build();
@@ -69,7 +73,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         try{
             FoodTutorial object = foodTutorialRepository.findById(id).orElse(null);
             if(object == null){
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
             object.setImg(linkBucket + object.getImg());
             return ResponseObject.builder()
@@ -80,7 +84,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: "+ e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -90,7 +94,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         try{
             CookingRecipe cookingRecipe = cookingRecipeRepository.findById(object.getCookingRecipeId()).orElse(null);
             if(cookingRecipe == null){
-                throw new Exception("CookingRecipe not found");
+                throw new ObjectNotFound("CookingRecipe not found");
             }
 
             for (FoodTutorialDTOcreateItem item: object.getItems()) {
@@ -101,13 +105,13 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
             }
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .data(foodTutorialRepository.findAllByCookingRecipeId(object.getCookingRecipeId(), null).getContent())
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -117,7 +121,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         try{
             FoodTutorial object1 = foodTutorialRepository.findById(object.getId()).orElse(null);
             if(object1 == null) {
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
             object1.setNumberOrder(object.getNumberOrder());
             object1.setDescription(object.getDescription());
@@ -126,12 +130,12 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
             foodTutorialRepository.save(object1);
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -141,7 +145,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         try{
             FoodTutorial object = foodTutorialRepository.findById(id).orElse(null);
             if(object == null) {
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
             if(!object.getImg().equals(logoName)){
                 fileStore.deleteImage(object.getImg());
@@ -153,12 +157,12 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
             foodTutorialRepository.save(object);
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -168,7 +172,7 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
         try{
             FoodTutorial object = foodTutorialRepository.findById(id).orElse(null);
             if(object == null) {
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
             if(!object.getImg().equals(logoName)){
                 fileStore.deleteImage(object.getImg());
@@ -177,12 +181,12 @@ public class FoodTutorialServiceImpl implements FoodTutorialService {
             foodTutorialRepository.delete(object);
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }

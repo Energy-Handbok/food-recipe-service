@@ -34,10 +34,11 @@ public class UserServiceCall {
 
     private UserSystem getUserFromResponse(ResponseEntity<?> responseEntity) {
         UserSystem user = null;
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) responseEntity.getBody();
         try {
+            LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) responseEntity.getBody();
+            if(data == null) return null;
             user = UserSystem.linkedHashMapToEntity((LinkedHashMap<String, Object>) data.get("data"));
-        } catch (ParseException e) {
+        } catch (NullPointerException | ParseException e) {
             throw new RuntimeException(e);
         }
         return user;

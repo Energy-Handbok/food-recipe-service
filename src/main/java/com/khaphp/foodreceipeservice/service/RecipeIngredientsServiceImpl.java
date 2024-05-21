@@ -1,12 +1,12 @@
 package com.khaphp.foodreceipeservice.service;
 
 import com.khaphp.common.dto.ResponseObject;
-import com.khaphp.foodreceipeservice.dto.CookingRecipe.CookingRecipeDTOdetail;
 import com.khaphp.foodreceipeservice.dto.RecipeIngredirents.RecipeIngredientsDTOcreate;
 import com.khaphp.foodreceipeservice.dto.RecipeIngredirents.RecipeIngredientsDTOcreateItem;
 import com.khaphp.foodreceipeservice.dto.RecipeIngredirents.RecipeIngredientsDTOupdateItem;
 import com.khaphp.foodreceipeservice.entity.CookingRecipe;
 import com.khaphp.foodreceipeservice.entity.RecipeIngredients;
+import com.khaphp.foodreceipeservice.exception.ObjectNotFound;
 import com.khaphp.foodreceipeservice.repo.CookingRecipeRepository;
 import com.khaphp.foodreceipeservice.repo.RecipeIngredientsRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
+    public static final String OBJECT_NOT_FOUND_MSG = "object not found";
+    public static final String EXCEPTION_MSG = "Exception: ";
+    public static final String SUCCESS_MSG = "Success";
     private final RecipeIngredientsRepository recipeIngredientsRepository;
     private final CookingRecipeRepository cookingRecipeRepository;
     private final ModelMapper modelMapper;
@@ -57,7 +60,7 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
             objList.forEach(object -> object.setImg(linkBucket + object.getImg()));
         }
         return ResponseObject.builder()
-                .code(200).message("Success")
+                .code(200).message(SUCCESS_MSG)
                 .pageSize(objList.size()).pageIndex(pageIndex).totalPage(totalPage)
                 .data(objList)
                 .build();
@@ -68,7 +71,7 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
         try{
             RecipeIngredients object = recipeIngredientsRepository.findById(id).orElse(null);
             if(object == null){
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
             object.setImg(linkBucket + object.getImg());
             return ResponseObject.builder()
@@ -79,7 +82,7 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: "+ e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -89,7 +92,7 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
         try{
             CookingRecipe cookingRecipe = cookingRecipeRepository.findById(object.getCookingRecipeId()).orElse(null);
             if(cookingRecipe == null){
-                throw new Exception("CookingRecipe not found");
+                throw new ObjectNotFound("CookingRecipe not found");
             }
 
             for (RecipeIngredientsDTOcreateItem item: object.getItems()) {
@@ -100,13 +103,13 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
             }
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .data(recipeIngredientsRepository.findAllByCookingRecipeId(object.getCookingRecipeId(), null).getContent())
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -116,7 +119,7 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
         try{
             RecipeIngredients object1 = recipeIngredientsRepository.findById(object.getId()).orElse(null);
             if(object1 == null) {
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
             object1.setName(object.getName());
             object1.setAmount(object.getAmount());
@@ -126,12 +129,12 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
             recipeIngredientsRepository.save(object1);
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
@@ -141,11 +144,11 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
         try{
             RecipeIngredients object = recipeIngredientsRepository.findById(id).orElse(null);
             if(object == null) {
-                throw new Exception("object not found");
+                throw new ObjectNotFound(OBJECT_NOT_FOUND_MSG);
             }
-            if(!object.getImg().equals(logoName)){
-                fileStore.deleteImage(object.getImg());
-            }
+
+            deleteImg(object);
+
             //upload new img
             object.setImg(fileStore.uploadImg(file));
             //update lại time cho cooking recipe của nó
@@ -153,13 +156,19 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
             recipeIngredientsRepository.save(object);
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
+        }
+    }
+
+    private void deleteImg(RecipeIngredients object) {
+        if(!object.getImg().equals(logoName)){
+            fileStore.deleteImage(object.getImg());
         }
     }
 
@@ -168,21 +177,20 @@ public class RecipeIngredientsServiceImpl implements RecipeIngredientsService {
         try{
             RecipeIngredients object = recipeIngredientsRepository.findById(id).orElse(null);
             if(object == null) {
-                throw new Exception("object not found");
+                throw new Exception(OBJECT_NOT_FOUND_MSG);
             }
-            if(!object.getImg().equals(logoName)){
-                fileStore.deleteImage(object.getImg());
-            }
+
+            deleteImg(object);
 
             recipeIngredientsRepository.delete(object);
             return ResponseObject.builder()
                     .code(200)
-                    .message("Success")
+                    .message(SUCCESS_MSG)
                     .build();
         }catch (Exception e){
             return ResponseObject.builder()
                     .code(400)
-                    .message("Exception: " + e.getMessage())
+                    .message(EXCEPTION_MSG + e.getMessage())
                     .build();
         }
     }
