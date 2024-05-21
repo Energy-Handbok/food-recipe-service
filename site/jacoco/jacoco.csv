@@ -1,7 +1,0 @@
-GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-food-receipe-service,com.khaphp.foodreceipeservice.controller,RecipeIngredientsController,105,0,12,0,25,0,13,0,7,0
-food-receipe-service,com.khaphp.foodreceipeservice.controller,CookingRecipeController,105,0,12,0,25,0,13,0,7,0
-food-receipe-service,com.khaphp.foodreceipeservice.controller,FoodTutorialController,105,0,12,0,25,0,13,0,7,0
-food-receipe-service,com.khaphp.foodreceipeservice.service,FoodTutorialServiceImpl,376,0,24,0,100,0,20,0,8,0
-food-receipe-service,com.khaphp.foodreceipeservice.service,CookingRecipeServiceImpl,471,0,30,0,129,0,22,0,7,0
-food-receipe-service,com.khaphp.foodreceipeservice.service,RecipeIngredientsServiceImpl,374,0,26,0,102,0,21,0,8,0
